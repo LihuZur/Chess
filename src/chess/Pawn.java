@@ -1,98 +1,37 @@
 package chess;
 
 public class Pawn extends Soldier{
-	private boolean first_move;
 	
-	public Pawn(char color, int row, int col, Soldier[][] board) {
-		super(color, row, col, board);
-		this.first_move = true;
+	public Pawn(Color color, int row, int col, Soldier[][] board,Color_set set,Color_set other_set) {
+		super(color, row, col, board,set,other_set);
 	}
 	
 	
-	public boolean move(int row, int col, Soldier[][] board) {
-		if(!super.move(row, col, board)) {
-			Helper_functions.print_move_err();
+	public boolean is_legal(int row, int col, Soldier[][] board) {
+		if(!super.is_legal(row, col, board)) {
 			return false;
 		}
+		
+		int small_move = this.color == Color.WHITE ? -1 : 1;
+		int big_move = this.color == Color.WHITE ? -2 : 2;
 		//move
 		if(col == this.curr_col) {
-			if(this.color == 'W') {
-				if(row == this.curr_row - 1) {
-					if(board[row][col] == null) {
-						this.first_move = false;
-						Helper_functions.init_location((Soldier) this,row,col,board);
-						return true;
-					}
-					else {
-						Helper_functions.print_move_err();
-						return false;
-					}
-				}
-				
-				else if(row == this.curr_row - 2 && first_move){
-					if(board[row][col] == null) {
-						this.first_move = false;
-						Helper_functions.init_location((Soldier) this,row,col,board);
-						return true;
-					}
-					else {
-						Helper_functions.print_move_err();
-						return false;
-					}
-				}
-				
-				Helper_functions.print_move_err();
-				return false;
-				}
-			
-			else {//color == 'B'
-				if(row == this.curr_row + 1) {
-					if(board[row][col] == null) {
-						this.first_move = false;
-						Helper_functions.init_location((Soldier) this,row,col,board);
-						return true;
-					}
-					else {
-						Helper_functions.print_move_err();
-						return false;
-					}
-				}
-				
-				else if(row == this.curr_row + 2 && first_move){
-					if(board[row][col] == null) {
-					this.first_move = false;
-					Helper_functions.init_location((Soldier) this,row,col,board);
+			if(board[row][col] == null) {
+				if((row == this.curr_row + small_move) || (row == this.curr_row + big_move && first_move)) {
 					return true;
-					}
-					else {
-						Helper_functions.print_move_err();
-						return false;
-					}
 				}
-				
-				Helper_functions.print_move_err();
-				return false;
 			}
+			
+			return false;
 		}
-		//attack
+		//attack/error
 		else {
-			if((this.color == 'W' && row == curr_row -1 && Math.abs(col - this.curr_col) == 1)||
-			   (this.color == 'B' && row == curr_row +1 && Math.abs(col - this.curr_col) == 1)) {
-				if(board[row][col]!= null && board[row][col].color != this.color) {
-					board[row][col].alive = false;
-					this.first_move = false;
-					Helper_functions.init_location((Soldier) this,row,col,board);
+			if((row == this.curr_row + small_move && Math.abs(col - this.curr_col) == 1) &&
+			   (board[row][col]!= null && board[row][col].color != this.color)) {
 					return true;
-				}
-				
-				else {
-					Helper_functions.print_move_err();
-					return false;
-				}
 			}
 			
 			else {
-				Helper_functions.print_move_err();
 				return false;
 			}
 		}

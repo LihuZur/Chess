@@ -2,32 +2,15 @@ package chess;
 
 public class Knight extends Soldier {
 	
-	public Knight(char color, int row, int col, Soldier[][] board) {
-		super(color, row, col, board);
+	public Knight(Color color, int row, int col, Soldier[][] board,Color_set set,Color_set other_set) {
+		super(color, row, col, board,set,other_set);
 	}
 	
-	public boolean move(int row, int col, Soldier[][] board) {
-		if(!super.move(row, col, board)) {
-			Helper_functions.print_move_err();
-			return false;
-		}
-		
-		if(((col == this.curr_col - 2) && (Math.abs(row - this.curr_row) == 1))||
-		   ((col == this.curr_col - 1) && (Math.abs(row - this.curr_row) == 2))||
-		   ((col == this.curr_col + 1) && (Math.abs(row - this.curr_row) == 2))||
-		   ((col == this.curr_col + 2) && (Math.abs(row - this.curr_row) == 1)))
-		{
-			if(board[row][col] != null) {
-				board[row][col].alive = false;
-			}
-			
-			Helper_functions.init_location((Soldier) this,row,col,board);
-			return true;
-		}
-		
-		else {
-			Helper_functions.print_move_err();
-			return false;
-		}
+	public boolean is_legal(int row, int col, Soldier[][] board) {
+		return super.is_legal(row, col, board) && 
+			   (((col == this.curr_col - 2) && (Math.abs(row - this.curr_row) == 1))||
+			   ((col == this.curr_col - 1) && (Math.abs(row - this.curr_row) == 2))||
+			   ((col == this.curr_col + 1) && (Math.abs(row - this.curr_row) == 2))||
+			   ((col == this.curr_col + 2) && (Math.abs(row - this.curr_row) == 1)));
 	}
 }
