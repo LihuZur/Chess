@@ -7,8 +7,8 @@ public abstract class Soldier {
 	protected boolean first_move;
 	protected Color_set set;
 	protected Color_set other_set;
-	protected int last_row = -1;
-	protected int last_col = -1;
+	protected int last_row;
+	protected int last_col;
 
 	public boolean is_legal(int row, int col, Soldier[][] board) {
 		// initial legality tests
@@ -25,6 +25,8 @@ public abstract class Soldier {
 		this.first_move = true;
 		this.set = set;
 		this.other_set = other_set;
+		this.last_row = curr_row;
+		this.last_col = curr_col;
 	}
 
 	public boolean move(int row, int col, Soldier[][] board) {
