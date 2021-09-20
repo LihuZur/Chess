@@ -5,15 +5,20 @@ import java.util.Set;
 
 public class Test {
 	public static void main(String[] args) {
-	Soldier[][] board = new Soldier[8][8];
+	Board board = new Board();
 	
-	Color_set black = new Color_set();
-	Color_set white= new Color_set();
-	HashSet<Soldier> rooks = new HashSet<>();
-	rooks.add(new Rook(Color.BLACK,0,0,board,black,white));
-	rooks.add(new Rook(Color.BLACK,0,7,board,black,white));
-	black.put(Rook.class,rooks);
+	board.print();
 	
+	board.get_board()[1][0].move(2,0);
+	
+	board.print();
+	
+	board.get_board()[2][0].undo_move();
+		
+	board.print();
+	
+	
+	/*
 	Pair<Integer,Integer> p = new Pair<>(0,2);
 	
 	Soldier s = find_soldier(black,Rook.class,'\0','\0',"",p,board);
@@ -21,7 +26,7 @@ public class Test {
 		System.out.println("no result");
 	}
 	else {
-		System.out.println("row: " + s.curr_row + " col: " + s.curr_col);
+		System.out.println("row: " + s.get_row() + " col: " + s.get_col());
 	}
 }
 	
@@ -40,18 +45,18 @@ public class Test {
 				
 				else {//2 or more Soldiers of this kind can make the move
 					if(found_mid || middle.length() == 0) {//mid cannot decide
-						Helper_functions.print_move_err();
+						Board.print_move_err();
 						return null;
 					}
 					else if(middle.length() == 1) {
 						if(letter_info != '\0') {//a letter is given
-							if(sol.curr_col == init_col(letter_info)) {
+							if(sol.get_col() == init_col(letter_info)) {
 								found_mid = true;
 								res = sol;
 							}	
 						}
 						else{//a number is given
-							if(sol.curr_row == init_row(number_info)) {
+							if(sol.get_row() == init_row(number_info)) {
 								found_mid = true;
 								res = sol;
 							}
@@ -60,7 +65,7 @@ public class Test {
 					
 					else {//middle.length() == 2
 						Pair<Integer,Integer> p = translate_location(letter_info,number_info);
-						if(p.first == sol.curr_row && p.second == sol.curr_col) {
+						if(p.first == sol.get_row() && p.second == sol.get_col()) {
 							found_mid = true;
 							res = sol;
 						}
@@ -84,5 +89,6 @@ public class Test {
 	
 	private static int init_col(char c) {
 		return c - 97;//97 is the ASCII value of 'a'
-	}
+	}*/
+}
 }

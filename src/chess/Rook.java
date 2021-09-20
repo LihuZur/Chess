@@ -2,13 +2,15 @@ package chess;
 
 public class Rook extends Soldier{
 
-	public Rook(Color color, int row, int col, Soldier[][] board, Color_set set,Color_set other_set) {
-		super(color, row, col, board, set,other_set);
+	public Rook(Color color, int row, int col, Color_set set) {
+		super(color, row, col, set);
+		char letter = color == Color.WHITE ? '♖' : '♜';
+		this.set_letter(letter);
 	}
 	
-	public boolean is_legal(int row, int col, Soldier[][] board) {
-		return super.is_legal(row, col, board) && 
-			   (((this.curr_col == col) || (this.curr_row == row)) 
-			   && Helper_functions.horizontal_legal_way((Soldier)this,row,col,board));
+	public boolean is_legal(int row, int col) {
+		return super.is_legal(row, col) && 
+			   (((this.get_col() == col) || (this.get_row() == row)) 
+			   && this.set.get_board().horizontal_legal_way((Soldier)this,row,col));
 	}	
 }

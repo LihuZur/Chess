@@ -7,64 +7,11 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Game {
+	private Board board;
 
 	public void play() throws ClassNotFoundException {
 
-		// initializing the board
-		Soldier[][] board = new Soldier[8][8];
-		Color_set black = new Color_set();
-		Color_set white = new Color_set();
-		
-
-		HashSet<Soldier> brs = new HashSet<>();
-		brs.add(new Rook(Color.BLACK, 0, 0, board, black,white));
-		brs.add(new Rook(Color.BLACK, 0, 7, board, black,white));
-		black.put(Rook.class, brs);
-		HashSet<Soldier> bks = new HashSet<>();
-		bks.add(new Knight(Color.BLACK, 0, 1, board, black,white));
-		bks.add(new Knight(Color.BLACK, 0, 6, board, black,white));
-		black.put(Knight.class, bks);
-		HashSet<Soldier> bbs = new HashSet<>();
-		bbs.add(new Bishop(Color.BLACK, 0, 2, board, black,white));
-		bbs.add(new Bishop(Color.BLACK, 0, 5, board, black,white));
-		black.put(Bishop.class, bbs);
-		HashSet<Soldier> bqs = new HashSet<>();
-		bqs.add(new Queen(Color.BLACK, 0, 3, board, black,white));
-		black.put(Queen.class, bqs);
-		HashSet<Soldier> bk = new HashSet<>();
-		bk.add(new King(Color.BLACK, 0, 4, board, black,white));
-		black.put(King.class, bk);
-		HashSet<Soldier> bps = new HashSet<>();
-		for(int i=0;i<8;i++) {
-			bps.add(new Pawn(Color.BLACK, 1, i, board, black,white));
-		}
-		black.put(Pawn.class, bps);
-
-		
-
-		HashSet<Soldier> wrs = new HashSet<>();
-		wrs.add(new Rook(Color.WHITE, 7, 0, board, white,black));
-		wrs.add(new Rook(Color.WHITE, 7, 7, board, white,black));
-		white.put(Rook.class, wrs);
-		HashSet<Soldier> wks = new HashSet<>();
-		wks.add(new Knight(Color.WHITE, 7, 1, board, white,black));
-		wks.add(new Knight(Color.WHITE, 7, 6, board, white,black));
-		white.put(Knight.class, wks);
-		HashSet<Soldier> wbs = new HashSet<>();
-		wbs.add(new Bishop(Color.WHITE, 7, 2, board, white,black));
-		wbs.add(new Bishop(Color.WHITE, 7, 5, board, white,black));
-		white.put(Bishop.class, wbs);
-		HashSet<Soldier> wqs = new HashSet<>();
-		wqs.add(new Queen(Color.WHITE, 7, 3, board, white,black));
-		white.put(Bishop.class, wqs);
-		HashSet<Soldier> wk = new HashSet<>();
-		wk.add(new King(Color.WHITE, 7, 4, board, white,black));
-		white.put(King.class, wk);
-		HashSet<Soldier> wps = new HashSet<>();
-		for(int i=0;i<8;i++) {
-			bps.add(new Pawn(Color.WHITE, 6, i, board, white,black));
-		}
-		white.put(Pawn.class, wps);
+		this.board = new Board();
 
 		boolean white_turn = true;
 		Scanner scan = new Scanner(System.in);
@@ -73,19 +20,22 @@ public class Game {
 		
 		// game loop
 		while (true) {
+			board.print();
 			s = white_turn ? "White turn: " : "Black turn: ";
-			curr_set = white_turn ? white : black;
-			other_set = white_turn ? black : white;
-			Pair<Pair<Soldier, Boolean>, Pair<Integer, Integer>> move_now;
+			System.out.println(s);
+			curr_set = white_turn ? board.get_set(Color.WHITE) : board.get_set(Color.BLACK);
+			other_set = white_turn ? board.get_set(Color.BLACK) : board.get_set(Color.WHITE);
+			Pair<Soldier, Pair<Integer, Integer>> move_now;
 			boolean legal_move = false; 
 			
-			if(!curr_set.has_legal_moves(board)) {
+			if(!curr_set.has_legal_moves()) {
+				s = white_turn ? " Black wins!" : "White wins!";
 				if(curr_set.get_in_check()) {
-					System.out.println("Checkmate!");
+					System.out.println("Checkmate!" + s);
 				}
 				
 				else {
-					System.out.println("Stalemate!");
+					System.out.println("Stalemate!" + s);
 				}
 				
 				break;
@@ -94,23 +44,23 @@ public class Game {
 			do {
 				System.out.println(s + "Please enter your move");
 				s = scan.nextLine();
-				move_now = parse_input(white_turn, curr_set, other_set, s, board);
+				move_now = parse_input(white_turn, curr_set, other_set, s);
 				if(move_now != null) {
-					legal_move = move_now.first.first.move(move_now.second.first, move_now.second.second, board);
+					legal_move = move_now.first.move(move_now.second.first, move_now.second.second);
 				}
 				
 			} while (!legal_move);
 
-
+			other_set.update_in_check();
 			white_turn = !white_turn;
 		}
 	}
 
-	private Pair<Pair<Soldier, Boolean>, Pair<Integer, Integer>> parse_input(Boolean white_turn, Color_set curr_set,
-			Color_set other_set, String input, Soldier[][] board) throws ClassNotFoundException {
+	private Pair<Soldier, Pair<Integer, Integer>> parse_input(Boolean white_turn, Color_set curr_set,
+			Color_set other_set, String input) throws ClassNotFoundException {
 		// ADD SPECIAL MOVEMENT CASES
 		if (input.length() < 2 || input.length() > 6) {
-			Helper_functions.print_move_err();
+			Board.print_move_err();
 			return null;
 		}
 
@@ -119,20 +69,20 @@ public class Game {
 		boolean colon_at_end = input.charAt(input.length() - 1) == ':' ? true : false;
 		boolean capture_move = colon_at_end;
 		Pair<Character, Character> dest = new Pair<>(null, null);
-		Pair<Pair<Soldier, Boolean>, Pair<Integer, Integer>> res = new Pair<>(new Pair<>(null, false), null);
+		Pair<Soldier, Pair<Integer, Integer>> res = new Pair<>(null, null);
 		Class c;
 		final HashSet<Character> board_letters = new HashSet<>(Arrays.asList('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'));
 		final HashSet<Character> board_numbers = new HashSet<>(Arrays.asList('1', '2', '3', '4', '5', '6', '7', '8'));
 		final HashSet<Character> class_letters = new HashSet<>(Arrays.asList('Q', 'R', 'K', 'B', 'N', 'S', '='));
 
 		if ((!colon_at_end) && (!board_numbers.contains(c1))) {
-			Helper_functions.print_move_err();
+			Board.print_move_err();
 			return null;
 		}
 
 		input = clean_input(input, class_letters, c1, c2);// cleaning added characters
 
-		switch (input.charAt(0)) {// ADD WEIRD PICTURES CASES!
+		switch (input.charAt(0)) {
 
 		case '♔':
 		case '♚':
@@ -174,7 +124,7 @@ public class Game {
 		}
 
 		else {
-			Helper_functions.print_move_err();
+			Board.print_move_err();
 			return null;
 		}
 
@@ -212,7 +162,7 @@ public class Game {
 			middle = middle.substring(0, middle.length() - 1);
 			capture_move = true;
 			if (colon_at_end && middle.charAt(middle.length() - 1) == ':') {// multiple ":"- error
-				Helper_functions.print_move_err();
+				Board.print_move_err();
 				return null;
 			}
 		}
@@ -230,7 +180,7 @@ public class Game {
 			}
 
 			else {// illegal input
-				Helper_functions.print_move_err();
+				Board.print_move_err();
 				return null;
 			}
 		}
@@ -242,24 +192,24 @@ public class Game {
 			}
 
 			else {// illegal input
-				Helper_functions.print_move_err();
+				Board.print_move_err();
 				return null;
 			}
 		}
 
 		else {// illegal input
-			Helper_functions.print_move_err();
+			Board.print_move_err();
 			return null;
 		}
 
 		// finding the Soldier
-		Soldier s = find_soldier(curr_set, c, letter_info, number_info, middle, res.second, board);
+		Soldier s = find_soldier(curr_set, c, letter_info, number_info, middle, res.second);
 
 		if (s == null) {
 			return null;
 		}
 
-		res.first.first = s;
+		res.first = s;
 		return res;
 
 	}
@@ -279,13 +229,13 @@ public class Game {
 	}
 
 	private static Soldier find_soldier(Color_set curr_set, Class c, char letter_info, char number_info, String middle,
-			Pair<Integer, Integer> input_p, Soldier[][] board) {
+			Pair<Integer, Integer> input_p) {
 		Set<Soldier> s = curr_set.get(c);
 		Soldier res = null;
 		HashSet<Soldier> potential = new HashSet<>();
 
 		for (Soldier sol : s) {
-			if (sol.is_legal(input_p.first, input_p.second, board)) {
+			if (sol.is_legal(input_p.first, input_p.second)) {
 				potential.add(sol);
 			}
 		}
@@ -296,11 +246,11 @@ public class Game {
 
 			if (middle.length() == 1) {
 				if (letter_info != '\0') {// a letter is given
-					if (sol.curr_col == init_col(letter_info)) {
+					if (sol.get_col() == init_col(letter_info)) {
 						found.add(sol);
 					}
 				} else {// a number is given
-					if (sol.curr_row == init_row(number_info)) {
+					if (sol.get_row() == init_row(number_info)) {
 						found.add(sol);
 					}
 				}
@@ -308,7 +258,7 @@ public class Game {
 
 			else {// middle.length() == 2
 				Pair<Integer, Integer> p = translate_location(letter_info, number_info);
-				if(p.first == sol.curr_row && p.second == sol.curr_col) {
+				if(p.first == sol.get_row() && p.second == sol.get_col()) {
 					found.add(sol);
 				}
 			}
@@ -319,7 +269,7 @@ public class Game {
 			return found.iterator().next();
 		}
 		
-		Helper_functions.print_move_err();
+		Board.print_move_err();
 		return null;
 	}
 

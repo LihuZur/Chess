@@ -1,36 +1,41 @@
 package chess;
 
-public abstract class Soldier {
-	protected Color color;
-	protected int curr_row;
-	protected int curr_col;
-	protected boolean first_move;
-	protected Color_set set;
-	protected Color_set other_set;
-	protected int last_row;
-	protected int last_col;
+import java.util.Optional;
 
-	public boolean is_legal(int row, int col, Soldier[][] board) {
+public abstract class Soldier {
+	private Color color;
+	private int curr_row;
+	private int curr_col;
+	private boolean first_move;
+	protected Color_set set;
+	private int last_row;
+	private int last_col;
+	private Soldier last_soldier;
+	private char letter;
+
+	public boolean is_legal(int row, int col) {
 		// initial legality tests
-		return row >= 0 && row <= 7 && col >= 0 && col <= 7
-				&& ((board[row][col] == null) || (board[row][col].color != this.color))
+		Optional<Soldier> s = this.set.get_board().get(row, col);
+		if(s == null) {
+			return false;
+		}
+		return  ((!s.isPresent()) || (s.get().color != this.color))
 				&& !((this.curr_row == row) && (this.curr_col == col));
 	};
 
-	public Soldier(Color color, int row, int col, Soldier[][] board, Color_set set, Color_set other_set) {
+	public Soldier(Color color, int row, int col, Color_set set) {
 		this.color = color;
 		this.curr_row = row;
 		this.curr_col = col;
-		board[row][col] = this;
 		this.first_move = true;
 		this.set = set;
-		this.other_set = other_set;
+		this.set.get_board().get_board()[row][col] = this;
 		this.last_row = curr_row;
 		this.last_col = curr_col;
 	}
 
-	public boolean move(int row, int col, Soldier[][] board) {
-		Soldier target = board[row][col];// may be null
+	public boolean move(int row, int col) {
+		Soldier target = this.set.get_board().get_board()[row][col];// may be null
 		if (target != null) {
 			Class c = target.getClass();
 			target.set.get(c).remove(target);// deleting the target from the game
@@ -38,15 +43,12 @@ public abstract class Soldier {
 
 		this.first_move = false;
 		Pair<Integer,Integer> p = new Pair<>(this.curr_row,this.curr_col);
-		this.init_location(row, col, board);
+		this.last_soldier = this.set.get_board().get_board()[row][col];
+		this.init_location(row, col);
 		
-		if(this.other_set.check(this.set.get_king(),board)) {
+		if(this.set.is_in_check()) {
 			this.undo_move();
 			return false;
-		}
-		
-		if(this.set.check(this.other_set.get_king(),board)) {
-			other_set.set_in_check(true);
 		}
 		
 		this.last_row = p.first;
@@ -55,16 +57,43 @@ public abstract class Soldier {
 
 	}
 
-	private void init_location(int row, int col, Soldier[][] board) {
-		board[this.curr_row][this.curr_col] = null;// emptying the previous location
+	private void init_location(int row, int col) {
+		this.set.get_board().get_board()[this.curr_row][this.curr_col] = null;// emptying the previous location
 		this.curr_row = row;
 		this.curr_col = col;
-		board[row][col] = this;
+		this.set.get_board().get_board()[row][col] = this;
 	}
 	
 	public void undo_move() {
-		this.curr_row = last_row;
-		this.curr_col = last_col;
+		this.set.get_board().get_board()[this.curr_row][this.curr_col] = this.last_soldier;
+		this.curr_row = this.last_row;
+		this.curr_col = this.last_col;
+		this.set.get_board().get_board()[this.curr_row][this.curr_col] = this;
 	}
+	
+	public char get_letter() {
+		return this.letter;
+	}
+	
+	public void set_letter(char letter) {
+		this.letter = letter;
+	}
+	
+	public int get_row() {
+		return this.curr_row;
+	}
+	
+	public int get_col() {
+		return this.curr_col;
+	}
+	
+	public Color get_color() {
+		return this.color;
+	}
+	
+	public boolean get_first_move() {
+		return this.first_move;
+	}
+	
 
 }

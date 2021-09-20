@@ -6,17 +6,15 @@ import java.util.Iterator;
 
 public class Color_set extends HashMap<Class,HashSet<Soldier>>{
 	private boolean in_check;
+	private Board board;
+	
+	public Color_set(Board board) {
+		this.board = board;
+	}
 
-	protected boolean check(Soldier enemy_king, Soldier[][] board) {
-		for(HashSet<Soldier> s: this.values()) {
-			for(Soldier sol: s) {
-				if(sol.is_legal(enemy_king.curr_row,enemy_king.curr_col,board)) {
-					return true;
-				}
-			}
-		}
-		
-		return false;
+	protected boolean is_in_check() {
+		Soldier this_king = this.get_king();
+		return this.board.is_threatened(this_king);
 	}
 	
 	protected Soldier get_king() {
@@ -27,13 +25,13 @@ public class Color_set extends HashMap<Class,HashSet<Soldier>>{
 		return this.in_check;
 	}
 	
-	public boolean has_legal_moves(Soldier[][] board) {
+	public boolean has_legal_moves() {
 		for(HashSet<Soldier> s: this.values()) {
 			for(Soldier sol: s) {
 				for(int i=0;i<8;i++) {
 					for(int j=0;j<8;j++) {
-						if(sol.is_legal(i, j, board)) {
-							boolean legal = sol.move(i, j, board);
+						if(sol.is_legal(i, j)) {
+							boolean legal = sol.move(i, j);
 							if(legal) {
 								sol.undo_move();
 								return true;
@@ -47,8 +45,13 @@ public class Color_set extends HashMap<Class,HashSet<Soldier>>{
 		return false;
 	}
 	
-	public void set_in_check(boolean input) {
-		this.in_check = input;
+	
+	public void update_in_check() {
+		this.in_check = this.is_in_check();
+	}
+	
+	public Board get_board() {
+		return this.board;
 	}
 }
 
