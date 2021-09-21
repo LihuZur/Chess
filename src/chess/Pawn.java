@@ -4,8 +4,8 @@ import java.util.Optional;
 
 public class Pawn extends Soldier{
 	
-	public Pawn(Color color, int row, int col,Color_set set) {
-		super(color, row, col,set);
+	public Pawn(Color color, int row, int col,Player player) {
+		super(color, row, col,player);
 		char letter = color == Color.WHITE ? '♙' : '♟';
 		this.set_letter(letter);
 	}
@@ -18,7 +18,7 @@ public class Pawn extends Soldier{
 		
 		int small_move = this.get_color() == Color.WHITE ? -1 : 1;
 		int big_move = this.get_color() == Color.WHITE ? -2 : 2;
-		Optional<Soldier> s = this.set.get_board().get(row, col);
+		Optional<Soldier> s = this.player.get_board().get(row, col);
 		//move
 		if(col == this.get_col()) {
 			if(s.isPresent()) {

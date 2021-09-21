@@ -1,15 +1,13 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 public class Board {
 	private Soldier[][] board = new Soldier[8][8];
-	private Color_set black = new Color_set(this);
-	private Color_set white = new Color_set(this);
+	private Player black = new Player(this);
+	private Player white = new Player(this);
 	
 	public Board() {//Initializing the game's starting position
 		
@@ -66,7 +64,7 @@ public class Board {
 		
 	}
 	
-	public Color_set get_set(Color c) {
+	public Player get_player(Color c) {
 		if(c == Color.WHITE) {
 			return this.white;
 		}
@@ -130,9 +128,9 @@ public class Board {
 	}
 	
 	public boolean is_threatened(Soldier s) {
-		Color_set enemy = s.get_color() == Color.WHITE ? this.white : this.black;
-		for(Set<Soldier> set : enemy.values()) {
-			for(Soldier sol : set) {
+		Player enemy = s.get_color() == Color.WHITE ? this.white : this.black;
+		for(Set<Soldier> player : enemy.values()) {
+			for(Soldier sol : player) {
 				if(sol.is_legal(0, 0)) {
 					boolean success = sol.move(s.get_row(), s.get_col());
 					if(success) {

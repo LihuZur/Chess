@@ -2,13 +2,15 @@ package chess;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-
-public class Color_set extends HashMap<Class,HashSet<Soldier>>{
+public class Player extends HashMap<Class<?>,HashSet<Soldier>>{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private boolean in_check;
 	private Board board;
 	
-	public Color_set(Board board) {
+	public Player(Board board) {
 		this.board = board;
 	}
 

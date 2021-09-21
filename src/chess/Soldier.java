@@ -7,7 +7,7 @@ public abstract class Soldier {
 	private int curr_row;
 	private int curr_col;
 	private boolean first_move;
-	protected Color_set set;
+	protected Player player;
 	private int last_row;
 	private int last_col;
 	private Soldier last_soldier;
@@ -15,7 +15,7 @@ public abstract class Soldier {
 
 	public boolean is_legal(int row, int col) {
 		// initial legality tests
-		Optional<Soldier> s = this.set.get_board().get(row, col);
+		Optional<Soldier> s = this.player.get_board().get(row, col);
 		if(s == null) {
 			return false;
 		}
@@ -23,30 +23,30 @@ public abstract class Soldier {
 				&& !((this.curr_row == row) && (this.curr_col == col));
 	};
 
-	public Soldier(Color color, int row, int col, Color_set set) {
+	public Soldier(Color color, int row, int col, Player player) {
 		this.color = color;
 		this.curr_row = row;
 		this.curr_col = col;
 		this.first_move = true;
-		this.set = set;
-		this.set.get_board().get_board()[row][col] = this;
+		this.player = player;
+		this.player.get_board().get_board()[row][col] = this;
 		this.last_row = curr_row;
 		this.last_col = curr_col;
 	}
 
 	public boolean move(int row, int col) {
-		Soldier target = this.set.get_board().get_board()[row][col];// may be null
+		Soldier target = this.player.get_board().get_board()[row][col];// may be null
 		if (target != null) {
-			Class c = target.getClass();
-			target.set.get(c).remove(target);// deleting the target from the game
+			Class<? extends Soldier> c = target.getClass();
+			target.player.get(c).remove(target);// deleting the target from the game
 		}
 
 		this.first_move = false;
 		Pair<Integer,Integer> p = new Pair<>(this.curr_row,this.curr_col);
-		this.last_soldier = this.set.get_board().get_board()[row][col];
+		this.last_soldier = this.player.get_board().get_board()[row][col];
 		this.init_location(row, col);
 		
-		if(this.set.is_in_check()) {
+		if(this.player.is_in_check()) {
 			this.undo_move();
 			return false;
 		}
@@ -58,17 +58,17 @@ public abstract class Soldier {
 	}
 
 	private void init_location(int row, int col) {
-		this.set.get_board().get_board()[this.curr_row][this.curr_col] = null;// emptying the previous location
+		this.player.get_board().get_board()[this.curr_row][this.curr_col] = null;// emptying the previous location
 		this.curr_row = row;
 		this.curr_col = col;
-		this.set.get_board().get_board()[row][col] = this;
+		this.player.get_board().get_board()[row][col] = this;
 	}
 	
 	public void undo_move() {
-		this.set.get_board().get_board()[this.curr_row][this.curr_col] = this.last_soldier;
+		this.player.get_board().get_board()[this.curr_row][this.curr_col] = this.last_soldier;
 		this.curr_row = this.last_row;
 		this.curr_col = this.last_col;
-		this.set.get_board().get_board()[this.curr_row][this.curr_col] = this;
+		this.player.get_board().get_board()[this.curr_row][this.curr_col] = this;
 	}
 	
 	public char get_letter() {

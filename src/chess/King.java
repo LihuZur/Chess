@@ -2,8 +2,8 @@ package chess;
 
 public class King extends Soldier{
 	
-	public King(Color color, int row, int col, Color_set set) {
-		super(color, row, col,set);
+	public King(Color color, int row, int col, Player player) {
+		super(color, row, col,player);
 		char letter = color == Color.WHITE ? '♔' : '♚';
 		this.set_letter(letter);
 	}

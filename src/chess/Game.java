@@ -2,7 +2,6 @@ package chess;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -14,23 +13,23 @@ public class Game {
 		this.board = new Board();
 
 		boolean white_turn = true;
-		Scanner scan = new Scanner(System.in);
 		String s;
-		Color_set curr_set, other_set;
+		Scanner scan = new Scanner(System.in);
+		Player curr_player, other_player;
 		
 		// game loop
 		while (true) {
 			board.print();
 			s = white_turn ? "White turn: " : "Black turn: ";
 			System.out.println(s);
-			curr_set = white_turn ? board.get_set(Color.WHITE) : board.get_set(Color.BLACK);
-			other_set = white_turn ? board.get_set(Color.BLACK) : board.get_set(Color.WHITE);
+			curr_player = white_turn ? board.get_player(Color.WHITE) : board.get_player(Color.BLACK);
+			other_player = white_turn ? board.get_player(Color.BLACK) : board.get_player(Color.WHITE);
 			Pair<Soldier, Pair<Integer, Integer>> move_now;
 			boolean legal_move = false; 
 			
-			if(!curr_set.has_legal_moves()) {
+			if(!curr_player.has_legal_moves()) {
 				s = white_turn ? " Black wins!" : "White wins!";
-				if(curr_set.get_in_check()) {
+				if(curr_player.get_in_check()) {
 					System.out.println("Checkmate!" + s);
 				}
 				
@@ -44,20 +43,21 @@ public class Game {
 			do {
 				System.out.println(s + "Please enter your move");
 				s = scan.nextLine();
-				move_now = parse_input(white_turn, curr_set, other_set, s);
+				move_now = parse_input(white_turn, curr_player, other_player, s);
 				if(move_now != null) {
 					legal_move = move_now.first.move(move_now.second.first, move_now.second.second);
 				}
 				
 			} while (!legal_move);
 
-			other_set.update_in_check();
+			other_player.update_in_check();
 			white_turn = !white_turn;
 		}
+		scan.close();
 	}
 
-	private Pair<Soldier, Pair<Integer, Integer>> parse_input(Boolean white_turn, Color_set curr_set,
-			Color_set other_set, String input) throws ClassNotFoundException {
+	private Pair<Soldier, Pair<Integer, Integer>> parse_input(Boolean white_turn, Player curr_player,
+			Player other_player, String input) throws ClassNotFoundException {
 		// ADD SPECIAL MOVEMENT CASES
 		if (input.length() < 2 || input.length() > 6) {
 			Board.print_move_err();
@@ -67,10 +67,8 @@ public class Game {
 		char c1 = input.charAt(input.length() - 1);
 		char c2 = input.charAt(input.length() - 2);
 		boolean colon_at_end = input.charAt(input.length() - 1) == ':' ? true : false;
-		boolean capture_move = colon_at_end;
-		Pair<Character, Character> dest = new Pair<>(null, null);
 		Pair<Soldier, Pair<Integer, Integer>> res = new Pair<>(null, null);
-		Class c;
+		Class<? extends Soldier> c;
 		final HashSet<Character> board_letters = new HashSet<>(Arrays.asList('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'));
 		final HashSet<Character> board_numbers = new HashSet<>(Arrays.asList('1', '2', '3', '4', '5', '6', '7', '8'));
 		final HashSet<Character> class_letters = new HashSet<>(Arrays.asList('Q', 'R', 'K', 'B', 'N', 'S', '='));
@@ -160,7 +158,6 @@ public class Game {
 																										// there is
 																										// such)
 			middle = middle.substring(0, middle.length() - 1);
-			capture_move = true;
 			if (colon_at_end && middle.charAt(middle.length() - 1) == ':') {// multiple ":"- error
 				Board.print_move_err();
 				return null;
@@ -203,7 +200,7 @@ public class Game {
 		}
 
 		// finding the Soldier
-		Soldier s = find_soldier(curr_set, c, letter_info, number_info, middle, res.second);
+		Soldier s = find_soldier(curr_player, c, letter_info, number_info, middle, res.second);
 
 		if (s == null) {
 			return null;
@@ -228,10 +225,9 @@ public class Game {
 		return c - 97;// 97 is the ASCII value of 'a'
 	}
 
-	private static Soldier find_soldier(Color_set curr_set, Class c, char letter_info, char number_info, String middle,
+	private static Soldier find_soldier(Player curr_player, Class<? extends Soldier> c, char letter_info, char number_info, String middle,
 			Pair<Integer, Integer> input_p) {
-		Set<Soldier> s = curr_set.get(c);
-		Soldier res = null;
+		Set<Soldier> s = curr_player.get(c);
 		HashSet<Soldier> potential = new HashSet<>();
 
 		for (Soldier sol : s) {
