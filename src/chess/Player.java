@@ -2,7 +2,7 @@ package chess;
 
 import java.util.HashMap;
 import java.util.HashSet;
-public class Player extends HashMap<Class<?>,HashSet<Soldier>>{
+public class Player extends HashMap<Class<? extends Soldier>,HashSet<Soldier>>{
 	/**
 	 * 
 	 */

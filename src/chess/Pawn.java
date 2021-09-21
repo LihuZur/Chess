@@ -16,12 +16,12 @@ public class Pawn extends Soldier{
 			return false;
 		}
 		
-		int small_move = this.get_color() == Color.WHITE ? -1 : 1;
-		int big_move = this.get_color() == Color.WHITE ? -2 : 2;
+		int small_move = this.get_color() == Color.WHITE ? 1 : -1;
+		int big_move = this.get_color() == Color.WHITE ? 2 : -2;
 		Optional<Soldier> s = this.player.get_board().get(row, col);
 		//move
 		if(col == this.get_col()) {
-			if(s.isPresent()) {
+			if(!s.isPresent()) {
 				if((row == this.get_row() + small_move) || (row == this.get_row() + big_move && get_first_move())) {
 					return true;
 				}
