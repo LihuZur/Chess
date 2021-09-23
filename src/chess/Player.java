@@ -3,9 +3,6 @@ package chess;
 import java.util.HashMap;
 import java.util.HashSet;
 public class Player extends HashMap<Class<? extends Soldier>,HashSet<Soldier>>{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private boolean in_check;
 	private Board board;

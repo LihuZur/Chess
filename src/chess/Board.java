@@ -55,7 +55,7 @@ public class Board {
 		this.white.put(Bishop.class, wbs);
 		HashSet<Soldier> wqs = new HashSet<>();
 		wqs.add(new Queen(Color.WHITE, 0, 3, white));
-		this.white.put(Bishop.class, wqs);
+		this.white.put(Queen.class, wqs);
 		HashSet<Soldier> wk = new HashSet<>();
 		wk.add(new King(Color.WHITE, 0, 4, white));
 		this.white.put(King.class, wk);
@@ -135,7 +135,7 @@ public class Board {
 		Player enemy = s.get_color() == Color.WHITE ? this.white : this.black;
 		for(Set<Soldier> player : enemy.values()) {
 			for(Soldier sol : player) {
-				if(sol.is_legal(0, 0)) {
+				if(sol.is_legal(s.get_row(), s.get_col())) {
 					boolean success = sol.move(s.get_row(), s.get_col());
 					if(success) {
 						sol.undo_move();

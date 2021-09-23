@@ -11,6 +11,6 @@ public class Rook extends Soldier{
 	public boolean is_legal(int row, int col) {
 		return super.is_legal(row, col) && 
 			   (((this.get_col() == col) || (this.get_row() == row)) 
-			   && this.player.get_board().horizontal_legal_way((Soldier)this,row,col));
+						&& this.player.get_board().horizontal_legal_way(this, row, col));
 	}	
 }

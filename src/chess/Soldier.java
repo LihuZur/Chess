@@ -19,8 +19,12 @@ public abstract class Soldier {
 		if(s == null) {
 			return false;
 		}
-		return  ((!s.isPresent()) || (s.get().color != this.color))
-				&& !((this.curr_row == row) && (this.curr_col == col));
+		
+		if(!s.isPresent()) {
+			return true;
+		}
+		
+		return  (s.get().color != this.color) && !((this.curr_row == row) && (this.curr_col == col));
 	};
 
 	public Soldier(Color color, int row, int col, Player player) {

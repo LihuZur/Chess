@@ -124,7 +124,7 @@ public class Game {
 	private static Soldier find_soldier(Player curr_player, Class<? extends Soldier> c, Pair<Character,Character> src, Pair<Integer, Integer> dest) {
 		Set<Soldier> s = curr_player.get(c);
 		HashSet<Soldier> potential = new HashSet<>();
-
+		
 		for (Soldier sol : s) {
 			if (sol.is_legal(dest.first, dest.second)) {
 				potential.add(sol);
