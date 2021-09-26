@@ -8,9 +8,6 @@ public abstract class Soldier {
 	private int curr_col;
 	private boolean first_move;
 	protected Player player;
-	private int last_row;
-	private int last_col;
-	private Soldier last_soldier;
 	private char letter;
 
 	public boolean is_legal(int row, int col) {
@@ -34,31 +31,25 @@ public abstract class Soldier {
 		this.first_move = true;
 		this.player = player;
 		this.player.get_board().get_board()[row][col] = this;
-		this.last_row = curr_row;
-		this.last_col = curr_col;
 	}
 
 	public boolean move(int row, int col) {
 		Soldier target = this.player.get_board().get_board()[row][col];// may be null
-		if (target != null) {
+		if (target != null && target.getClass() != King.class) {
 			Class<? extends Soldier> c = target.getClass();
 			target.player.get(c).remove(target);// deleting the target from the game
 		}
 
 		this.first_move = false;
+		boolean is_in_check = this.player.get_in_check();
 		Pair<Integer,Integer> p = new Pair<>(this.curr_row,this.curr_col);
-		this.last_soldier = this.player.get_board().get_board()[row][col];
-		this.init_location(row, col);
-		
-		if(this.player.is_in_check()) {
-			this.undo_move();
+
+		if(!this.try_move(row,col)){
 			return false;
 		}
-		
-		this.last_row = p.first;
-		this.last_col = p.second;
-		return true;
 
+		this.do_move(row,col);
+		return true;
 	}
 
 	private void init_location(int row, int col) {
@@ -67,14 +58,7 @@ public abstract class Soldier {
 		this.curr_col = col;
 		this.player.get_board().get_board()[row][col] = this;
 	}
-	
-	public void undo_move() {
-		this.player.get_board().get_board()[this.curr_row][this.curr_col] = this.last_soldier;
-		this.curr_row = this.last_row;
-		this.curr_col = this.last_col;
-		this.player.get_board().get_board()[this.curr_row][this.curr_col] = this;
-	}
-	
+
 	public char get_letter() {
 		return this.letter;
 	}
@@ -99,5 +83,15 @@ public abstract class Soldier {
 		return this.first_move;
 	}
 	
+	public abstract Soldier clone(Player p);
 
+	private boolean do_move(int row, int col){
+		this.init_location(row, col);
+		return !this.player.is_in_check();
+	}
+
+	public boolean try_move(int row, int col){
+		Board b = this.player.get_board().clone();
+		return b.get_board()[this.curr_row][this.curr_col].do_move(row,col);
+	}
 }

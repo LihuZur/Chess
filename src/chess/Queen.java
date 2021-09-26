@@ -15,4 +15,8 @@ public class Queen extends Soldier{
 				(((this.get_col() == col) || (this.get_row()== row))//horizontal move
 				&& this.player.get_board().horizontal_legal_way((Soldier)this,row,col)));
 	}
+
+	public Soldier clone(Player p){
+		return new Queen(this.get_color(),this.get_row(),this.get_col(),p);
+	}
 }

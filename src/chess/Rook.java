@@ -12,5 +12,9 @@ public class Rook extends Soldier{
 		return super.is_legal(row, col) && 
 			   (((this.get_col() == col) || (this.get_row() == row)) 
 						&& this.player.get_board().horizontal_legal_way(this, row, col));
-	}	
+	}
+
+	public Soldier clone(Player p){
+		return new Rook(this.get_color(),this.get_row(),this.get_col(),p);
+	}
 }

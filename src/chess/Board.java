@@ -85,9 +85,6 @@ public class Board {
 		System.out.println("Illegal move! \n");
 	}
 		
-	public static void print_check_err() {
-		System.out.println("This move puts you on a check!");
-	}
 
 	public boolean diagonal_legal_way(Soldier s, int row, int col) {
 		int i_move = (col > s.get_col() && row > s.get_row()) || (col <= s.get_col() && row > s.get_row())? 1 : -1;
@@ -132,13 +129,12 @@ public class Board {
 	}
 	
 	public boolean is_threatened(Soldier s) {
-		Player enemy = s.get_color() == Color.WHITE ? this.white : this.black;
+		Player enemy = s.get_color() == Color.WHITE ? this.black : this.white;
 		for(Set<Soldier> player : enemy.values()) {
 			for(Soldier sol : player) {
 				if(sol.is_legal(s.get_row(), s.get_col())) {
-					boolean success = sol.move(s.get_row(), s.get_col());
+					boolean success = sol.try_move(s.get_row(), s.get_col());
 					if(success) {
-						sol.undo_move();
 						return true;
 					}
 					
@@ -175,5 +171,17 @@ public class Board {
 			System.out.println();
 		}
 		System.out.println();
+	}
+
+	public Board clone(){
+		Board res = new Board();
+		for(int i=0;i<8;i++){
+			for(int j=0;j<8;j++){
+				res.get_board()[i][j] = null;
+			}
+		}
+		res.black = this.black.clone(res);
+		res.white = this.white.clone(res);
+		return res;
 	}
 }

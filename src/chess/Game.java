@@ -56,6 +56,9 @@ public class Game {
 			} while (!legal_move);
 
 			other_player.update_in_check();
+			if(other_player.is_in_check()) {
+				System.out.println("Check!");
+			}
 			white_turn = !white_turn;
 		}
 		scan.close();

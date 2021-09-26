@@ -41,4 +41,8 @@ public class Pawn extends Soldier{
 			}
 		}
 	}
+
+	public Soldier clone(Player p){
+		return new Pawn(this.get_color(),this.get_row(),this.get_col(),p);
+	}
 }

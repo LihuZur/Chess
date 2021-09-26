@@ -12,4 +12,8 @@ public class Bishop extends Soldier {
 		return super.is_legal(row, col) && Math.abs(col - this.get_col()) == Math.abs(row - this.get_row())
 				&& this.player.get_board().diagonal_legal_way(this, row, col);
 	}
+
+	public Soldier clone(Player p){
+		return new Bishop(this.get_color(),this.get_row(),this.get_col(),p);
+	}
 }

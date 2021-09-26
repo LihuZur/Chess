@@ -11,9 +11,20 @@ public class Test {
 	
 	board.print();
 	
-	board.get_board()[2][0].undo_move();
+	//board.get_board()[2][0].undo_move();
 		
+	//board.print();
+
+	Board clone = board.clone();
+
+	clone.print();
+
+	board.get_board()[1][7].move(3,7);
 	board.print();
+	clone.get_board()[1][4].move(3,4);
+	clone.print();
+
+
 	
 	
 	/*

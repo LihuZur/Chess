@@ -30,9 +30,8 @@ public class Player extends HashMap<Class<? extends Soldier>,HashSet<Soldier>>{
 				for(int i=0;i<8;i++) {
 					for(int j=0;j<8;j++) {
 						if(sol.is_legal(i, j)) {
-							boolean legal = sol.move(i, j);
+							boolean legal = sol.try_move(i,j);
 							if(legal) {
-								sol.undo_move();
 								return true;
 							}
 						}
@@ -52,5 +51,18 @@ public class Player extends HashMap<Class<? extends Soldier>,HashSet<Soldier>>{
 	public Board get_board() {
 		return this.board;
 	}
+
+	public Player clone(Board b){
+		Player res = new Player(b);
+		for(Class<? extends Soldier> c : this.keySet()){
+			res.put(c,new HashSet <>());
+			for(Soldier sol : this.get(c)){
+				res.get(c).add(sol.clone(res));
+			}
+		}
+		return res;
+	}
+
+
 }
 
