@@ -49,6 +49,11 @@ public abstract class Soldier {
 		}
 
 		this.do_move(row,col);
+
+		if(this.getClass() == Pawn.class && ((Pawn)this).get_promotion_letter() != '\0'){
+			((Pawn)this).pawn_promotion(row,col);
+		}
+
 		return true;
 	}
 

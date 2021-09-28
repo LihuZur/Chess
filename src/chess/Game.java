@@ -71,11 +71,21 @@ public class Game {
 			return null;
 		}
 
-		final HashSet<Character> board_numbers = new HashSet<>(Arrays.asList('1', '2', '3', '4', '5', '6', '7', '8'));
-		final HashSet<Character> class_letters = new HashSet<>(Arrays.asList('Q', 'R', 'K', 'B', 'N', 'S', '='));
-		input = clean_input(input, class_letters);// cleaning added characters
+		char promotion_letter = '\0';
+		char last_letter = input.charAt(input.length()-1);
+		if(Board.class_letters.contains(last_letter)){
+			if(last_letter == 'K' || last_letter == '='){
+				Board.print_move_err();
+				return null;
+			}
+
+			promotion_letter = last_letter;
+			input = input.substring(0,input.length()-1);
+		}
+
+		input = clean_input(input, Board.class_letters);// cleaning non-interesting added characters
 		Pair<Soldier, Pair<Integer, Integer>> res = new Pair<>(null, new Pair<>(1,2));//random initialization
-		if (!board_numbers.contains(input.charAt(input.length() - 1))) {
+		if (!Board.board_numbers.contains(input.charAt(input.length() - 1))) {
 			Board.print_move_err();
 			return null;
 		}
@@ -102,6 +112,11 @@ public class Game {
 		if (s == null) {
 			Board.print_move_err();
 			return null;
+		}
+
+		//dealing with pawn promotion if needed
+		if(s.getClass() == Pawn.class && promotion_letter != '\0'){
+			((Pawn)s).set_promotion_letter(promotion_letter);
 		}
 
 		res.first = s;

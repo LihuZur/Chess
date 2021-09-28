@@ -3,11 +3,13 @@ package chess;
 import java.util.Optional;
 
 public class Pawn extends Soldier{
-	
+	private char promotion_letter;
+
 	public Pawn(Color color, int row, int col,Player player) {
 		super(color, row, col,player);
 		char letter = color == Color.WHITE ? '♙' : '♟';
 		this.set_letter(letter);
+		this.promotion_letter = '\0';
 	}
 	
 	
@@ -44,5 +46,60 @@ public class Pawn extends Soldier{
 
 	public Soldier clone(Player p){
 		return new Pawn(this.get_color(),this.get_row(),this.get_col(),p);
+	}
+
+	public void pawn_promotion(int row, int col){
+		if((this.get_color() == Color.WHITE && row == 7) || (this.get_color() == Color.BLACK && row == 0)){
+			Class<? extends Soldier> new_soldier_class = Pawn.class;//random initialization
+			Soldier s = new Pawn(this.get_color(),this.get_row(),this.get_col(),this.player);//random initialization
+			switch(this.promotion_letter){
+				case '♕':
+				case '♛':
+				case 'Q':
+					new_soldier_class = Queen.class;
+					s = new Queen(this.get_color(),this.get_row(),this.get_col(),this.player);
+					break;
+				case '♖':
+				case '♜':
+				case 'R':
+					new_soldier_class = Rook.class;
+					s = new Rook(this.get_color(),this.get_row(),this.get_col(),this.player);
+					break;
+				case '♗':
+				case '♝':
+				case 'B':
+					s = new Bishop(this.get_color(),this.get_row(),this.get_col(),this.player);
+					break;
+				case '♘':
+				case '♞':
+				case 'N':
+				case 'S':
+					s = new Knight(this.get_color(),this.get_row(),this.get_col(),this.player);
+					break;
+				default://should never reach here
+					s = new Pawn(this.get_color(),this.get_row(),this.get_col(),this.player);
+					Board.print_move_err();
+			}
+
+			//adding the new Soldier and removing the Pawn
+			this.player.get(new_soldier_class).add((new_soldier_class.cast(s)));
+
+			for(Soldier sol : this.player.get(Pawn.class)){
+				if(sol.get_row() == this.get_row() && sol.get_col() == this.get_col()){
+					this.player.get(Pawn.class).remove(sol);
+					break;
+				}
+			}
+
+			this.promotion_letter = '\0';
+		}
+	}
+
+	public void set_promotion_letter(char c){
+		this.promotion_letter = c;
+	}
+
+	public char get_promotion_letter(){
+		return this.promotion_letter;
 	}
 }
