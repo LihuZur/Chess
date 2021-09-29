@@ -6,8 +6,10 @@ public class Player extends HashMap<Class<? extends Soldier>,HashSet<Soldier>>{
 	private static final long serialVersionUID = 1L;
 	private boolean in_check;
 	private Board board;
+	private Pawn can_get_ep;
 	
 	public Player(Board board) {
+		this.can_get_ep = null;
 		this.board = board;
 	}
 
@@ -63,6 +65,21 @@ public class Player extends HashMap<Class<? extends Soldier>,HashSet<Soldier>>{
 		return res;
 	}
 
+	public void set_can_get_ep(Pawn p){
+		this.can_get_ep = p;
+	}
 
+	public Pawn get_can_get_ep(){
+		return this.can_get_ep;
+	}
+
+	public void remove_soldier(Class<? extends Soldier> c, int row, int col){
+		for(Soldier sol : this.get(c)){
+			if(sol.get_row() == row && sol.get_col() == col){
+				this.get(c).remove(sol);
+				break;
+			}
+		}
+	}
 }
 

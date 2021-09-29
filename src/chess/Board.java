@@ -184,4 +184,14 @@ public class Board {
 		res.white = this.white.clone(res);
 		return res;
 	}
+
+	public Player get_black(){
+		return this.black;
+	}
+
+	public Player get_white(){
+		return this.white;
+	}
+
+
 }

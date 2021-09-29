@@ -45,7 +45,6 @@ public abstract class Soldier {
 		boolean was_first_move = this.first_move;
 		this.first_move = false;
 		boolean is_in_check = this.player.get_in_check();
-		Pair<Integer, Integer> p = new Pair<>(this.curr_row, this.curr_col);
 
 		if (!this.try_move(row, col)) {
 			if (was_first_move) {
@@ -55,6 +54,9 @@ public abstract class Soldier {
 		}
 
 		this.do_move(row, col);
+
+
+		this.player.set_can_get_ep(null);
 
 		if (promotion_check(this,row,col)) {
 			((Pawn) this).pawn_promotion(row, col);

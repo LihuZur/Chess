@@ -25,23 +25,31 @@ public class Pawn extends Soldier{
 		if(col == this.get_col()) {
 			if(!s.isPresent()) {
 				if((row == this.get_row() + small_move) || (row == this.get_row() + big_move && get_first_move())) {
+					if((row == this.get_row() + big_move && get_first_move())){//The enemy may be able to attempt en passant next turn
+						this.player.set_can_get_ep(this);
+					}
+
 					return true;
 				}
 			}
 			
 			return false;
 		}
-		//attack/error
+		// attack/e.p./error
 		else {
-			if((row == this.get_row() + small_move && Math.abs(col - this.get_col()) == 1) &&
-			   (s.isPresent() && s.get().get_color() != this.get_color())) {
+			if((row == this.get_row() + small_move && Math.abs(col - this.get_col()) == 1)){
+			   if((s.isPresent() && s.get().get_color() != this.get_color())) {
 					return true;
-			}
+				}
 			
-			else {
-				return false;
+				else {
+					return en_passant(this,row,col);
+				}
 			}
+
+			return false;
 		}
+
 	}
 
 	public Soldier clone(Player p){
@@ -67,25 +75,21 @@ public class Pawn extends Soldier{
 				case '♗':
 				case '♝':
 				case 'B':
+					new_soldier_class = Bishop.class;
 					s = new Bishop(this.get_color(),this.get_row(),this.get_col(),this.player);
 					break;
 				case '♘':
 				case '♞':
 				case 'N':
 				case 'S':
+					new_soldier_class = Knight.class;
 					s = new Knight(this.get_color(),this.get_row(),this.get_col(),this.player);
 					break;
 			}
 
 			//adding the new Soldier and removing the Pawn
 			this.player.get(new_soldier_class).add((new_soldier_class.cast(s)));
-
-			for(Soldier sol : this.player.get(Pawn.class)){
-				if(sol.get_row() == this.get_row() && sol.get_col() == this.get_col()){
-					this.player.get(Pawn.class).remove(sol);
-					break;
-				}
-			}
+			this.player.remove_soldier(Pawn.class,this.get_row(),this.get_col());
 
 			this.promotion_letter = '\0';
 
@@ -97,5 +101,24 @@ public class Pawn extends Soldier{
 
 	public char get_promotion_letter(){
 		return this.promotion_letter;
+	}
+
+	private boolean en_passant(Pawn p, int row, int col){
+		Board b = this.player.get_board();
+		Player enemy = this.get_color() == Color.WHITE ? b.get_black() : b.get_white();
+		Pawn enemy_pawn = enemy.get_can_get_ep();
+
+		if(enemy_pawn == null){
+			return false;
+		}
+
+		if((this.get_color() == Color.WHITE && row == 4) || (this.get_color() == Color.BLACK && row == 3)){
+			if(Math.abs(this.get_col() - enemy_pawn.get_col()) == 1){
+				enemy.remove_soldier(Pawn.class, enemy_pawn.get_row(), enemy_pawn.get_col());//removing the enemy pawn
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
