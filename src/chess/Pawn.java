@@ -49,10 +49,9 @@ public class Pawn extends Soldier{
 	}
 
 	public void pawn_promotion(int row, int col){
-		if((this.get_color() == Color.WHITE && row == 7) || (this.get_color() == Color.BLACK && row == 0)){
-			Class<? extends Soldier> new_soldier_class = Pawn.class;//random initialization
-			Soldier s = new Pawn(this.get_color(),this.get_row(),this.get_col(),this.player);//random initialization
-			switch(this.promotion_letter){
+		Class<? extends Soldier> new_soldier_class = Pawn.class;//random initialization
+		Soldier s = new Pawn(this.get_color(),this.get_row(),this.get_col(),this.player);//random initialization
+		switch(this.promotion_letter){
 				case '♕':
 				case '♛':
 				case 'Q':
@@ -76,9 +75,6 @@ public class Pawn extends Soldier{
 				case 'S':
 					s = new Knight(this.get_color(),this.get_row(),this.get_col(),this.player);
 					break;
-				default://should never reach here
-					s = new Pawn(this.get_color(),this.get_row(),this.get_col(),this.player);
-					Board.print_move_err();
 			}
 
 			//adding the new Soldier and removing the Pawn
@@ -92,7 +88,7 @@ public class Pawn extends Soldier{
 			}
 
 			this.promotion_letter = '\0';
-		}
+
 	}
 
 	public void set_promotion_letter(char c){
