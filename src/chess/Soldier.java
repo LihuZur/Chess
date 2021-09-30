@@ -55,8 +55,10 @@ public abstract class Soldier {
 
 		this.do_move(row, col);
 
-
-		this.player.set_can_get_ep(null);
+		if(!this.player.get_ep_now()) {
+			this.player.set_can_get_ep(null);
+		}
+		this.player.set_ep_now(false);
 
 		if (promotion_check(this,row,col)) {
 			((Pawn) this).pawn_promotion(row, col);

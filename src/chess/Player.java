@@ -7,9 +7,11 @@ public class Player extends HashMap<Class<? extends Soldier>,HashSet<Soldier>>{
 	private boolean in_check;
 	private Board board;
 	private Pawn can_get_ep;
+	private boolean ep_now;
 	
 	public Player(Board board) {
 		this.can_get_ep = null;
+		this.ep_now = false;
 		this.board = board;
 	}
 
@@ -71,6 +73,14 @@ public class Player extends HashMap<Class<? extends Soldier>,HashSet<Soldier>>{
 
 	public Pawn get_can_get_ep(){
 		return this.can_get_ep;
+	}
+
+	public boolean get_ep_now(){
+		return this.ep_now;
+	}
+
+	public void set_ep_now(boolean b){
+		this.ep_now = b;
 	}
 
 	public void remove_soldier(Class<? extends Soldier> c, int row, int col){

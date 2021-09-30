@@ -12,6 +12,8 @@ public class Board {
 	public static final HashSet<Character> board_letters = new HashSet<>(Arrays.asList('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'));
 	public static final HashSet<Character> board_numbers = new HashSet<>(Arrays.asList('1', '2', '3', '4', '5', '6', '7', '8'));
 	public static final HashSet<Character> class_letters = new HashSet<>(Arrays.asList('Q', 'R', 'K', 'B', 'N', 'S', '='));
+
+
 	
 	public Board() {//Initializing the game's starting position
 		

@@ -22,33 +22,34 @@ public class Pawn extends Soldier{
 		int big_move = this.get_color() == Color.WHITE ? 2 : -2;
 		Optional<Soldier> s = this.player.get_board().get(row, col);
 		//move
-		if(col == this.get_col()) {
-			if(!s.isPresent()) {
-				if((row == this.get_row() + small_move) || (row == this.get_row() + big_move && get_first_move())) {
-					if((row == this.get_row() + big_move && get_first_move())){//The enemy may be able to attempt en passant next turn
-						this.player.set_can_get_ep(this);
-					}
-
-					return true;
-				}
+		if(col == this.get_col() && !s.isPresent()) {
+			if ((row == this.get_row() + big_move && get_first_move())) {//The enemy may be able to attempt en passant next turn
+				this.player.set_can_get_ep(this);
+				this.player.set_ep_now(true);
+				return true;
 			}
-			
+
+			else if(row == this.get_row() + small_move){
+				return true;
+			}
+
 			return false;
+
 		}
-		// attack/e.p./error
+
 		else {
 			if((row == this.get_row() + small_move && Math.abs(col - this.get_col()) == 1)){
-			   if((s.isPresent() && s.get().get_color() != this.get_color())) {
+			   if((s.isPresent() && s.get().get_color() != this.get_color())) {//attack
 					return true;
 				}
 			
-				else {
+				else {//e.p.
 					return en_passant(this,row,col);
 				}
 			}
 
-			return false;
 		}
+		return false;
 
 	}
 
@@ -112,9 +113,10 @@ public class Pawn extends Soldier{
 			return false;
 		}
 
-		if((this.get_color() == Color.WHITE && row == 4) || (this.get_color() == Color.BLACK && row == 3)){
+		if((this.get_color() == Color.WHITE && this.get_row() == 4) || (this.get_color() == Color.BLACK && this.get_row() == 3)){
 			if(Math.abs(this.get_col() - enemy_pawn.get_col()) == 1){
 				enemy.remove_soldier(Pawn.class, enemy_pawn.get_row(), enemy_pawn.get_col());//removing the enemy pawn
+				b.get_board()[enemy_pawn.get_row()][enemy_pawn.get_col()] = null;
 				return true;
 			}
 		}
