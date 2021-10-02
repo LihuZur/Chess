@@ -1,9 +1,6 @@
 package chess;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class Board {
 	private Soldier[][] board = new Soldier[8][8];
@@ -13,7 +10,22 @@ public class Board {
 	public static final HashSet<Character> board_numbers = new HashSet<>(Arrays.asList('1', '2', '3', '4', '5', '6', '7', '8'));
 	public static final HashSet<Character> class_letters = new HashSet<>(Arrays.asList('Q', 'R', 'K', 'B', 'N', 'S', '='));
 
+	public Board(Boolean b){//Construtor for tests only! creates an empty board
+		this.black.put(Pawn.class,new HashSet<Soldier>());
+		this.black.put(Rook.class,new HashSet<Soldier>());
+		this.black.put(Bishop.class,new HashSet<Soldier>());
+		this.black.put(King.class,new HashSet<Soldier>());
+		this.black.put(Queen.class,new HashSet<Soldier>());
+		this.black.put(Knight.class,new HashSet<Soldier>());
 
+		this.white.put(Pawn.class,new HashSet<Soldier>());
+		this.white.put(Rook.class,new HashSet<Soldier>());
+		this.white.put(Bishop.class,new HashSet<Soldier>());
+		this.white.put(King.class,new HashSet<Soldier>());
+		this.white.put(Queen.class,new HashSet<Soldier>());
+		this.white.put(Knight.class,new HashSet<Soldier>());
+
+	}
 	
 	public Board() {//Initializing the game's starting position
 		
@@ -187,5 +199,47 @@ public class Board {
 		return this.white;
 	}
 
+	protected static Board build_board(String[] soldiers, Boolean white_turn){
+		Board b = new Board(true);//creating an empty board
+		Player white = b.get_white();
+		Player black = b.get_black();
 
+		for(int i=0;i<soldiers.length;i++){
+			Player curr = soldiers[i].charAt(0) == 'W' ? white : black;
+			Color c = soldiers[i].charAt(0) == 'W' ? Color.WHITE : Color.BLACK;
+			int row = Character.getNumericValue(soldiers[i].charAt(2));
+			int col = Character.getNumericValue(soldiers[i].charAt(3));
+
+			Class<? extends Soldier> sol_class = Pawn.class;
+			Soldier s = new Pawn(c,row,col,curr);
+
+			switch(soldiers[i].charAt(1)){
+				case 'B':
+					sol_class = Bishop.class;
+					s = new Bishop(c,row,col,curr);
+					break;
+				case 'K':
+					sol_class = King.class;
+					s = new King(c,row,col,curr);
+					break;
+				case 'N':
+					sol_class = Knight.class;
+					s = new Knight(c,row,col,curr);
+					break;
+				case 'Q':
+					sol_class = Queen.class;
+					s = new Queen(c,row,col,curr);
+					break;
+				case 'R':
+					sol_class = Rook.class;
+					s = new Rook(c,row,col,curr);
+					break;
+				//default: remain as initialized
+			}
+
+			curr.get(sol_class).add(s);
+		}
+
+		return b;
+	}
 }

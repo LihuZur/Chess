@@ -3,13 +3,11 @@ package chess;
 
 public class Test {
 	public static void main(String[] args) {
-		Pair<Soldier, Pair<Integer, Integer>> p = new Pair<Soldier, Pair<Integer, Integer>>(null,null);
-		if(p == null){
-			System.out.println(true);
-		}
+		String[] soldiers = {"BQ20","WK01","BK31","BR32","BR22","WB13"};
+		Board b = Board.build_board(soldiers,false);
+		Game game = new Game();
+		game.set_board(b);
+		game.play(false);
 
-		else{
-			System.out.println(false);
-		}
-}
+	}
 }

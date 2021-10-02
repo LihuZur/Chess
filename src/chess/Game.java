@@ -10,14 +10,12 @@ public class Game {
 
 	public static void main(String[] args) {
 		Game game = new Game();
-		game.play();
+		game.board = new Board();
+		game.play(true);
 	}
 
-	public void play() {
-
-		this.board = new Board();
-
-		boolean white_turn = true;
+	public void play(boolean white_start) {
+		boolean white_turn = white_start;
 		String s;
 		Scanner scan = new Scanner(System.in);
 		Player curr_player, other_player;
@@ -65,7 +63,7 @@ public class Game {
 		scan.close();
 	}
 
-	private Pair<Soldier, Pair<Integer, Integer>> parse_input(Boolean white_turn, Player curr_player, String input) {
+	protected Pair<Soldier, Pair<Integer, Integer>> parse_input(Boolean white_turn, Player curr_player, String input) {
 		if (input.equals("O-O")) {
 			if (legal_castling(white_turn, Castling_size.SMALL)) {
 				return new Pair<Soldier, Pair<Integer, Integer>>(null,null);
@@ -332,6 +330,10 @@ public class Game {
 		}
 
 		return false;
+	}
+
+	public void set_board(Board b){
+		this.board = b;
 	}
 }
 
