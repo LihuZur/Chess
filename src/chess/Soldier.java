@@ -67,7 +67,7 @@ public abstract class Soldier {
 		return true;
 	}
 
-	private void init_location(int row, int col) {
+	protected void init_location(int row, int col) {
 		this.player.get_board().get_board()[this.curr_row][this.curr_col] = null;// emptying the previous location
 		this.curr_row = row;
 		this.curr_col = col;

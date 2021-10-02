@@ -91,5 +91,17 @@ public class Player extends HashMap<Class<? extends Soldier>,HashSet<Soldier>>{
 			}
 		}
 	}
+
+	public Soldier get_rook(Castling_size s){
+		int search_col = s == Castling_size.SMALL ? 7 : 0;
+		for(Soldier sol : this.get(Rook.class)){
+			if(sol.get_col() == search_col && sol.get_first_move()){
+				return sol;
+			}
+		}
+
+		return null;
+
+	}
 }
 

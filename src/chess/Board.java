@@ -121,15 +121,7 @@ public class Board {
 		}
 		return true;
 	}
-		
-	public static int board_to_status(int i) {
-		return i * 2 + 1;
-	}
-	
-	public static int status_to_board(int i) {
-		return (int) Math.floor(i / 2.0);
-	}
-	
+
 	public boolean is_threatened(Soldier s) {
 		Player enemy = s.get_color() == Color.WHITE ? this.black : this.white;
 		for(Set<Soldier> player : enemy.values()) {
